@@ -14,8 +14,9 @@ export default function HistoriasClinicas() {
 
   const fetchPatients = async () => {
     setLoading(true);
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
+    const userId = localStorage.getItem("user_id");
+    if (!userId) {
+      alert("Sesión no encontrada. Por favor, iniciá sesión nuevamente.");
       setPatients([]);
       setLoading(false);
       return;
@@ -24,7 +25,7 @@ export default function HistoriasClinicas() {
     const { data, error } = await supabase
       .from("patients")
       .select("*")
-      .eq("user_id", user.id)
+      .eq("user_id", userId)
       .order("created_at", { ascending: false });
 
     if (!error) setPatients(data);
@@ -35,16 +36,16 @@ export default function HistoriasClinicas() {
     e.preventDefault();
     if (!name || !notes) return;
 
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      alert("Sesión expirada. Por favor, volvé a iniciar sesión.");
+    const userId = localStorage.getItem("user_id");
+    if (!userId) {
+      alert("Sesión no encontrada. Por favor, iniciá sesión nuevamente.");
       return;
     }
 
     const { error } = await supabase.from("patients").insert({
       name,
       notes,
-      user_id: user.id,
+      user_id: userId,
     });
 
     if (!error) {
