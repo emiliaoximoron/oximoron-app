@@ -14,10 +14,13 @@ export default function HistoriasClinicas() {
 
   const fetchPatients = async () => {
     setLoading(true);
+    const { data: { session } } = await supabase.auth.getSession();
     const { data, error } = await supabase
       .from("patients")
       .select("*")
+      .eq("user_id", session.user.id)
       .order("created_at", { ascending: false });
+
     if (!error) setPatients(data);
     setLoading(false);
   };
@@ -25,7 +28,15 @@ export default function HistoriasClinicas() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!name || !notes) return;
-    const { error } = await supabase.from("patients").insert({ name, notes });
+
+    const { data: { session } } = await supabase.auth.getSession();
+
+    const { error } = await supabase.from("patients").insert({
+      name,
+      notes,
+      user_id: session.user.id,
+    });
+
     if (!error) {
       setName("");
       setNotes("");
@@ -81,7 +92,7 @@ export default function HistoriasClinicas() {
 
       <hr style={{ margin: "2rem 0" }} />
 
-      <h3>Pacientes registrados</h3>
+      <h3>Mis pacientes registrados</h3>
       {loading ? <p>Cargando...</p> : (
         <ul>
           {patients.map((p) => (
