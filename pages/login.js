@@ -9,23 +9,49 @@ export default function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
     if (error) {
-      alert("Error al iniciar sesión: " + error.message);
-    } else {
+      alert(error.message);
+      return;
+    }
+
+    if (data?.user) {
+      // Guardar el user_id en localStorage
+      localStorage.setItem("user_id", data.user.id);
+
       router.push("/dashboard");
     }
   };
 
   return (
-    <div style={{ padding: "2rem", fontFamily: "sans-serif" }}>
-      <h1>Iniciar sesión en Oxímoron 💚</h1>
+    <div style={{ fontFamily: "sans-serif", marginTop: "2rem" }}>
+      <h2>Iniciar sesión</h2>
       <form onSubmit={handleLogin} style={{ marginTop: "1rem" }}>
-        <input type="email" placeholder="Correo electrónico" value={email} onChange={(e) => setEmail(e.target.value)} required style={{ display: "block", marginBottom: "1rem", padding: "0.5rem", width: "100%" }} />
-        <input type="password" placeholder="Contraseña" value={password} onChange={(e) => setPassword(e.target.value)} required style={{ display: "block", marginBottom: "1rem", padding: "0.5rem", width: "100%" }} />
-        <button type="submit" style={{ padding: "0.5rem 1rem" }}>Entrar</button>
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          style={{ padding: "0.5rem", width: "100%", marginBottom: "1rem" }}
+        />
+        <input
+          type="password"
+          placeholder="Contraseña"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          style={{ padding: "0.5rem", width: "100%", marginBottom: "1rem" }}
+        />
+        <button type="submit" style={{ padding: "0.5rem 1rem" }}>
+          Ingresar
+        </button>
       </form>
-      <p style={{ marginTop: "1rem" }}>¿No tenés cuenta? <a href="/register">Registrate acá</a></p>
     </div>
   );
 }
