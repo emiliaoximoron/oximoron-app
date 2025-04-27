@@ -15,6 +15,12 @@ export default function HistoriasClinicas() {
   const fetchPatients = async () => {
     setLoading(true);
     const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      setPatients([]);
+      setLoading(false);
+      return;
+    }
+
     const { data, error } = await supabase
       .from("patients")
       .select("*")
@@ -30,6 +36,10 @@ export default function HistoriasClinicas() {
     if (!name || !notes) return;
 
     const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      alert("Sesión expirada. Por favor, volvé a iniciar sesión.");
+      return;
+    }
 
     const { error } = await supabase.from("patients").insert({
       name,
