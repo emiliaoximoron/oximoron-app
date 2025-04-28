@@ -15,6 +15,7 @@ export default function Agenda() {
   const [newEventTitle, setNewEventTitle] = useState('');
   const [isSession, setIsSession] = useState(false);
   const [selectedPatientId, setSelectedPatientId] = useState('');
+  const [editingEvent, setEditingEvent] = useState(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -46,25 +47,70 @@ export default function Agenda() {
     setIsSession(false);
     setSelectedPatientId('');
     setNewEventTitle('');
+    setEditingEvent(null);
   }
 
-  async function handleAddEvent(e) {
+  function getPatientName(id) {
+    const patient = patients.find(p => p.id === id);
+    return patient ? patient.name : '';
+  }
+
+  async function handleAddOrEditEvent(e) {
     e.preventDefault();
     const formattedDate = date.toISOString().split('T')[0];
     const { data: { session } } = await supabase.auth.getSession();
-    const { error } = await supabase.from('events').insert([{
-      title: newEventTitle || (isSession ? getPatientName(selectedPatientId) : ''),
-      date: formattedDate,
-      type: isSession ? 'sesion' : 'personal',
-      patient_id: isSession ? selectedPatientId : null,
-      created_by_user_id: session.user.id
-    }]);
-    if (!error) {
-      setNewEventTitle('');
-      setShowForm(false);
-      router.reload();
+
+    if (isSession && !selectedPatientId) {
+      alert('Por favor seleccioná un paciente para guardar la sesión.');
+      return;
+    }
+
+    if (editingEvent) {
+      // Update existing event
+      const { error } = await supabase
+        .from('events')
+        .update({
+          title: newEventTitle || (isSession ? getPatientName(selectedPatientId) : ''),
+          type: isSession ? 'sesion' : 'personal',
+          patient_id: isSession ? selectedPatientId : null
+        })
+        .eq('id', editingEvent.id);
+
+      if (!error) {
+        setShowForm(false);
+        setEditingEvent(null);
+        router.reload();
+      } else {
+        alert('Error al actualizar el evento.');
+      }
     } else {
-      alert('Error al guardar el evento');
+      // Create new event
+      const { error } = await supabase.from('events').insert([{
+        title: newEventTitle || (isSession ? getPatientName(selectedPatientId) : ''),
+        date: formattedDate,
+        type: isSession ? 'sesion' : 'personal',
+        patient_id: isSession ? selectedPatientId : null,
+        created_by_user_id: session.user.id
+      }]);
+
+      if (!error) {
+        setNewEventTitle('');
+        setShowForm(false);
+        router.reload();
+      } else {
+        alert('Error al guardar el evento.');
+      }
+    }
+  }
+
+  async function handleDeleteEvent(id) {
+    if (confirm('¿Seguro que querés eliminar este evento?')) {
+      const { error } = await supabase.from('events').delete().eq('id', id);
+      if (!error) {
+        router.reload();
+      } else {
+        alert('Error al eliminar el evento.');
+      }
     }
   }
 
@@ -73,9 +119,13 @@ export default function Agenda() {
     return events.filter(e => e.date === formatted);
   }
 
-  function getPatientName(id) {
-    const patient = patients.find(p => p.id === id);
-    return patient ? patient.name : '';
+  function startEditEvent(event) {
+    setEditingEvent(event);
+    setDate(new Date(event.date));
+    setIsSession(event.type === 'sesion');
+    setNewEventTitle(event.title);
+    setSelectedPatientId(event.patient_id || '');
+    setShowForm(true);
   }
 
   return (
@@ -98,8 +148,8 @@ export default function Agenda() {
       />
 
       {showForm && (
-        <form onSubmit={handleAddEvent} style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', maxWidth: '400px' }}>
-          <h2>Nuevo evento para el {date.toISOString().split('T')[0]}</h2>
+        <form onSubmit={handleAddOrEditEvent} style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', maxWidth: '400px' }}>
+          <h2>{editingEvent ? 'Editar evento' : 'Nuevo evento'} para el {date.toISOString().split('T')[0]}</h2>
 
           <label>
             Tipo de evento:
@@ -133,7 +183,7 @@ export default function Agenda() {
           )}
 
           <button type="submit" style={{ padding: '10px', backgroundColor: '#4caf50', color: 'white', border: 'none', borderRadius: '5px' }}>
-            Guardar Evento
+            {editingEvent ? 'Actualizar' : 'Guardar'} Evento
           </button>
         </form>
       )}
@@ -145,8 +195,14 @@ export default function Agenda() {
             <li>No hay eventos para esta fecha.</li>
           ) : (
             getEventsForDate(date).map((event) => (
-              <li key={event.id} style={{ color: event.type === 'sesion' ? '#BA68C8' : '#FFB74D' }}>
+              <li key={event.id} style={{ color: event.type === 'sesion' ? '#BA68C8' : '#FFB74D', marginBottom: '10px' }}>
                 {event.title}
+                <button onClick={() => startEditEvent(event)} style={{ marginLeft: '10px', backgroundColor: '#2196f3', color: 'white', border: 'none', padding: '4px 8px', borderRadius: '4px' }}>
+                  Editar
+                </button>
+                <button onClick={() => handleDeleteEvent(event.id)} style={{ marginLeft: '5px', backgroundColor: '#f44336', color: 'white', border: 'none', padding: '4px 8px', borderRadius: '4px' }}>
+                  Eliminar
+                </button>
               </li>
             ))
           )}
