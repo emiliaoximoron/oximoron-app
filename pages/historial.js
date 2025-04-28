@@ -1,0 +1,1 @@
+export default function Historial() { return (<h1>Historial Clínico - Verás los pacientes y sus historias.</h1>); }

@@ -1,0 +1,1 @@
+export default function Facturacion() { return (<h1>Facturación - Aquí manejarás los cobros.</h1>); }

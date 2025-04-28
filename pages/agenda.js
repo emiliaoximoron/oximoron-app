@@ -1,0 +1,1 @@
+export default function Agenda() { return (<h1>Agenda - Aquí irá tu calendario completo.</h1>); }
