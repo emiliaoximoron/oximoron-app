@@ -7,7 +7,6 @@ import 'react-calendar/dist/Calendar.css';
 import Swal from 'sweetalert2';
 
 export default function Dashboard() {
-  const [patients, setPatients] = useState([]);
   const [userName, setUserName] = useState('');
   const [date, setDate] = useState(new Date());
   const router = useRouter();
@@ -16,14 +15,7 @@ export default function Dashboard() {
     async function fetchSession() {
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
-        setUserName(session.user.email.split('@')[0]); // muestra nombre parcial
-        const { data, error } = await supabase
-          .from('patients')
-          .select('*')
-          .eq('user_id', session.user.id);
-        if (!error) {
-          setPatients(data);
-        }
+        setUserName(session.user.email.split('@')[0]);
       } else {
         router.push('/login');
       }
