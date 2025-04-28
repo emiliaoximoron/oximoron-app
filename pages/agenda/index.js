@@ -29,7 +29,7 @@ export default function Agenda() {
 
         const { data: patientsData } = await supabase
           .from('patients')
-          .select('id, name, age')
+          .select('id, name')
           .eq('user_id', session.user.id);
 
         if (eventsData) setEvents(eventsData);
@@ -65,11 +65,13 @@ export default function Agenda() {
       return;
     }
 
+    const eventTitle = newEventTitle || (isSession ? getPatientName(selectedPatientId) : '');
+
     if (editingEvent) {
       const { error } = await supabase
         .from('events')
         .update({
-          title: newEventTitle || (isSession ? getPatientName(selectedPatientId) : ''),
+          title: eventTitle,
           type: isSession ? 'sesion' : 'personal',
           patient_id: isSession ? selectedPatientId : null
         })
@@ -84,7 +86,7 @@ export default function Agenda() {
       }
     } else {
       const { error } = await supabase.from('events').insert([{
-        title: newEventTitle || (isSession ? getPatientName(selectedPatientId) : ''),
+        title: eventTitle,
         date: formattedDate,
         type: isSession ? 'sesion' : 'personal',
         patient_id: isSession ? selectedPatientId : null,
@@ -173,7 +175,7 @@ export default function Agenda() {
                 <option value="">Seleccionar</option>
                 {patients.map((patient) => (
                   <option key={patient.id} value={patient.id}>
-                    {patient.name} ({patient.age} años)
+                    {patient.name}
                   </option>
                 ))}
               </select>
