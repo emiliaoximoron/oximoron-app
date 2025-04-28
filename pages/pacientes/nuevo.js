@@ -29,7 +29,12 @@ export default function NuevoPaciente() {
     }
 
     const { error } = await supabase.from('patients_v2').insert([{
-      ...formData,
+      name: formData.name,
+      birth_date: formData.birth_date,
+      health_insurance: formData.health_insurance,
+      family_group: formData.family_group,
+      diagnosis: formData.diagnosis,
+      therapy_type: formData.therapy_type,
       user_id: session.user.id
     }]);
 
