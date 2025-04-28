@@ -37,7 +37,7 @@ export default function Login() {
         <img src="/therapy.jpg" alt="Terapeuta y paciente" className={styles.image} />
       </div>
       <div className={styles.formSide}>
-        <h1>Bienvenido a Oxímoron</h1>
+        <h1 className={styles.titulo}>Bienvenido a Oxímoron</h1>
         <p className={styles.slogan}>Simplificar el pensar, dignificar el sentir.</p>
         <form onSubmit={handleLogin} className={styles.form}>
           <input
