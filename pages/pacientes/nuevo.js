@@ -1,75 +1,62 @@
 
 import { useState } from 'react';
+import { useRouter } from 'next/router';
 import { supabase } from '../../lib/supabaseClient';
+import Navbar from '../../components/Navbar';
 
 export default function NuevoPaciente() {
-  const [nombre, setNombre] = useState('');
-  const [edad, setEdad] = useState('');
-  const [diagnostico, setDiagnostico] = useState('');
-  const [mensaje, setMensaje] = useState('');
+  const router = useRouter();
+  const [formData, setFormData] = useState({
+    name: '',
+    birth_date: '',
+    health_insurance: '',
+    family_group: '',
+    diagnosis: '',
+    therapy_type: ''
+  });
 
-  async function handleSubmit(e) {
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setMensaje('');
-
     const { data: { session } } = await supabase.auth.getSession();
 
     if (!session) {
-      setMensaje('No estás autenticado.');
+      alert('No estás autenticado.');
       return;
     }
 
-    const { error } = await supabase.from('patients').insert([{
-      name: nombre,
-      age: edad,
-      diagnosis: diagnostico,
-      user_id: session.user.id,
+    const { error } = await supabase.from('patients_v2').insert([{
+      ...formData,
+      user_id: session.user.id
     }]);
 
     if (error) {
       console.error(error);
-      setMensaje('Error al guardar el paciente.');
+      alert('Error al crear paciente.');
     } else {
-      setMensaje('Paciente guardado exitosamente.');
-      setNombre('');
-      setEdad('');
-      setDiagnostico('');
+      alert('Paciente creado exitosamente.');
+      router.push('/dashboard');
     }
-  }
+  };
 
   return (
-    <div style={{ maxWidth: '600px', margin: '50px auto', padding: '20px', backgroundColor: '#e0f7e9', borderRadius: '10px' }}>
-      <h1>Nuevo Paciente</h1>
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-        <input
-          type="text"
-          placeholder="Nombre del paciente"
-          value={nombre}
-          onChange={(e) => setNombre(e.target.value)}
-          required
-          style={{ padding: '10px' }}
-        />
-        <input
-          type="number"
-          placeholder="Edad"
-          value={edad}
-          onChange={(e) => setEdad(e.target.value)}
-          required
-          style={{ padding: '10px' }}
-        />
-        <textarea
-          placeholder="Diagnóstico inicial"
-          value={diagnostico}
-          onChange={(e) => setDiagnostico(e.target.value)}
-          rows="4"
-          required
-          style={{ padding: '10px' }}
-        />
-        <button type="submit" style={{ padding: '10px', backgroundColor: '#4caf50', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
+    <div style={{ padding: '20px' }}>
+      <Navbar />
+      <h1>Registrar Nuevo Paciente</h1>
+      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', maxWidth: '500px', gap: '10px' }}>
+        <input name="name" placeholder="Nombre completo" onChange={handleChange} required />
+        <input type="date" name="birth_date" placeholder="Fecha de nacimiento" onChange={handleChange} required />
+        <input name="health_insurance" placeholder="Obra social" onChange={handleChange} />
+        <input name="family_group" placeholder="Grupo familiar" onChange={handleChange} />
+        <input name="diagnosis" placeholder="Diagnóstico" onChange={handleChange} required />
+        <input name="therapy_type" placeholder="Tipo de terapia" onChange={handleChange} required />
+        <button type="submit" style={{ backgroundColor: '#4caf50', color: 'white', padding: '10px', border: 'none', borderRadius: '5px' }}>
           Guardar Paciente
         </button>
       </form>
-      {mensaje && <p style={{ marginTop: '20px', color: mensaje.includes('exitosamente') ? 'green' : 'red' }}>{mensaje}</p>}
     </div>
   );
 }

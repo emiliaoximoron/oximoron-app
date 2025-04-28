@@ -15,11 +15,11 @@ export default function VerPaciente() {
   useEffect(() => {
     if (id) {
       async function fetchPatient() {
-        const { data, error } = await supabase.from('patients').select('*').eq('id', id).single();
+        const { data, error } = await supabase.from('patients_v2').select('*').eq('id', id).single();
         if (!error) setPatient(data);
       }
       async function fetchNotes() {
-        const { data, error } = await supabase.from('session_notes').select('*').eq('patient_id', id).order('date', { ascending: false });
+        const { data, error } = await supabase.from('session_notes_v2').select('*').eq('patient_id', id).order('date', { ascending: false });
         if (!error) setNotes(data);
       }
       fetchPatient();
@@ -41,7 +41,7 @@ export default function VerPaciente() {
       return;
     }
 
-    const { error } = await supabase.from('session_notes').insert([{
+    const { error } = await supabase.from('session_notes_v2').insert([{
       patient_id: id,
       note_text: nuevaNota,
       date: fecha,
@@ -82,7 +82,7 @@ export default function VerPaciente() {
           rows="4"
           required
         />
-        <button type="submit" style={{ padding: '10px', backgroundColor: '#4caf50', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
+        <button type="submit" style={{ padding: '10px', backgroundColor: '#4caf50', color: 'white', border: 'none', borderRadius: '5px' }}>
           Guardar Nota
         </button>
       </form>
