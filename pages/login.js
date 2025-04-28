@@ -1,63 +1,26 @@
-import { useState } from "react";
-import { useRouter } from "next/router";
-import { supabase } from "../lib/supabase";
-import styles from "../styles/Login.module.css";
+
+import Image from 'next/image';
 
 export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const router = useRouter();
-
-  const handleLogin = async (e) => {
-    e.preventDefault();
-
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (error) {
-      alert(error.message);
-      return;
-    }
-
-    if (data?.user) {
-      localStorage.setItem("user_id", data.user.id);
-      router.push("/dashboard");
-    }
-  };
-
-  const handleRegisterRedirect = () => {
-    router.push("/register");
-  };
-
   return (
-    <div className={styles.container}>
-      <div className={styles.imageSide}>
-        <img src="/therapy.jpg" alt="Terapeuta y paciente" className={styles.image} />
+    <div style={{ display: 'flex', height: '100vh' }}>
+      {/* Sección de la imagen */}
+      <div style={{ flex: 1, position: 'relative' }}>
+        <Image 
+          src="/therapy.jpg" 
+          alt="Imagen de terapia" 
+          fill 
+          style={{ objectFit: 'cover' }}
+        />
       </div>
-      <div className={styles.formSide}>
-        <h1 className={styles.titulo}>Bienvenido a Oxímoron</h1>
-        <p className={styles.slogan}>Simplificar el pensar, dignificar el sentir.</p>
-        <form onSubmit={handleLogin} className={styles.form}>
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <input
-            type="password"
-            placeholder="Contraseña"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          <button type="submit">Ingresar</button>
-          <button type="button" onClick={handleRegisterRedirect} className={styles.registerBtn}>
-            Registrarse
-          </button>
+
+      {/* Sección del formulario */}
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+        <h1>Login</h1>
+        <form style={{ display: 'flex', flexDirection: 'column', width: '300px' }}>
+          <input type="email" placeholder="Email" style={{ marginBottom: '10px', padding: '10px' }} />
+          <input type="password" placeholder="Contraseña" style={{ marginBottom: '10px', padding: '10px' }} />
+          <button type="submit" style={{ padding: '10px' }}>Ingresar</button>
         </form>
       </div>
     </div>
