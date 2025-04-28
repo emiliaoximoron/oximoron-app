@@ -35,11 +35,16 @@ export default function VerPaciente() {
       return;
     }
 
+    if (!fecha || !nuevaNota) {
+      alert('Por favor completá la fecha y la nota.');
+      return;
+    }
+
     const { error } = await supabase.from('session_notes').insert([{
       patient_id: id,
       note_text: nuevaNota,
       date: fecha,
-      created_by_user_id: session.user.id,
+      created_by_user_id: session.user.id
     }]);
 
     if (error) {
@@ -53,12 +58,12 @@ export default function VerPaciente() {
     }
   }
 
-  if (!patient) return <p>Cargando...</p>;
+  if (!patient) return <p>Cargando paciente...</p>;
 
   return (
     <div style={{ padding: '40px' }}>
       <h1>Paciente: {patient.name}</h1>
-      <h2>Diagnóstico inicial: {patient.diagnosis}</h2>
+      <h2>Diagnóstico: {patient.diagnosis}</h2>
 
       <form onSubmit={handleAddNote} style={{ marginTop: '30px', display: 'flex', flexDirection: 'column', gap: '10px', maxWidth: '500px' }}>
         <h3>Agregar nueva nota de sesión</h3>
@@ -69,7 +74,7 @@ export default function VerPaciente() {
           required
         />
         <textarea
-          placeholder="Escribir notas de la sesión..."
+          placeholder="Escribir nota de evolución..."
           value={nuevaNota}
           onChange={(e) => setNuevaNota(e.target.value)}
           rows="4"
@@ -81,9 +86,9 @@ export default function VerPaciente() {
       </form>
 
       <div style={{ marginTop: '40px' }}>
-        <h3>Notas registradas:</h3>
+        <h3>Notas de sesión registradas:</h3>
         {notes.length === 0 ? (
-          <p>No hay notas aún.</p>
+          <p>No hay notas registradas todavía.</p>
         ) : (
           <ul>
             {notes.map((note) => (
