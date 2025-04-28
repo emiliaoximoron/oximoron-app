@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { supabase } from '../../lib/supabaseClient';
+import Navbar from '../../components/Navbar';
 
 export default function VerPaciente() {
   const router = useRouter();
@@ -62,6 +63,7 @@ export default function VerPaciente() {
 
   return (
     <div style={{ padding: '40px' }}>
+      <Navbar />
       <h1>Paciente: {patient.name}</h1>
       <h2>Diagnóstico: {patient.diagnosis}</h2>
 
