@@ -1,72 +1,13 @@
-import Image from 'next/image';
-import Link from 'next/link';
 
-export default function Home() {
+export default function Login() {
   return (
-    <div style={{
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      height: '100vh',
-      backgroundColor: '#e0f7e9', // verde clarito
-      position: 'relative'
-    }}>
-      {/* Fondo de imagen */}
-      <div style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        zIndex: 0,
-        opacity: 0.2
-      }}>
-        <Image
-          src="/therapy.jpg"
-          alt="Fondo terapia"
-          fill
-          style={{ objectFit: 'cover' }}
-        />
-      </div>
-
-      {/* Contenido principal */}
-      <div style={{
-        position: 'relative',
-        zIndex: 1,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '20px',
-        alignItems: 'center',
-      }}>
-        <h1 style={{ color: '#2e7d32' }}>Bienvenido a Oxímoron</h1>
-
-        <Link href="/login" passHref>
-          <button style={{
-            padding: '10px 20px',
-            backgroundColor: '#4caf50',
-            color: 'white',
-            border: 'none',
-            borderRadius: '5px',
-            cursor: 'pointer'
-          }}>
-            Iniciar Sesión
-          </button>
-        </Link>
-
-        <Link href="/register" passHref>
-          <button style={{
-            padding: '10px 20px',
-            backgroundColor: '#81c784',
-            color: 'white',
-            border: 'none',
-            borderRadius: '5px',
-            cursor: 'pointer'
-          }}>
-            Registrarse
-          </button>
-        </Link>
-      </div>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
+      <h1>Iniciar Sesión</h1>
+      <form style={{ display: 'flex', flexDirection: 'column', width: '300px', gap: '10px' }}>
+        <input type="email" placeholder="Email" style={{ padding: '10px' }} />
+        <input type="password" placeholder="Contraseña" style={{ padding: '10px' }} />
+        <button type="submit" style={{ padding: '10px', backgroundColor: '#4caf50', color: 'white', border: 'none', borderRadius: '5px' }}>Ingresar</button>
+      </form>
     </div>
   );
 }
