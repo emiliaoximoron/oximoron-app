@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { supabase } from "../lib/supabase";
+import styles from "../styles/Login.module.css";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -21,37 +22,44 @@ export default function Login() {
     }
 
     if (data?.user) {
-      // Guardar el user_id en localStorage
       localStorage.setItem("user_id", data.user.id);
-
       router.push("/dashboard");
     }
   };
 
+  const handleRegisterRedirect = () => {
+    router.push("/register");
+  };
+
   return (
-    <div style={{ fontFamily: "sans-serif", marginTop: "2rem" }}>
-      <h2>Iniciar sesión</h2>
-      <form onSubmit={handleLogin} style={{ marginTop: "1rem" }}>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          style={{ padding: "0.5rem", width: "100%", marginBottom: "1rem" }}
-        />
-        <input
-          type="password"
-          placeholder="Contraseña"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          style={{ padding: "0.5rem", width: "100%", marginBottom: "1rem" }}
-        />
-        <button type="submit" style={{ padding: "0.5rem 1rem" }}>
-          Ingresar
-        </button>
-      </form>
+    <div className={styles.container}>
+      <div className={styles.imageSide}>
+        <img src="/therapy.jpg" alt="Terapeuta y paciente" className={styles.image} />
+      </div>
+      <div className={styles.formSide}>
+        <h1>Bienvenido a Oxímoron</h1>
+        <p className={styles.slogan}>Simplificar el pensar, dignificar el sentir.</p>
+        <form onSubmit={handleLogin} className={styles.form}>
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <input
+            type="password"
+            placeholder="Contraseña"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <button type="submit">Ingresar</button>
+          <button type="button" onClick={handleRegisterRedirect} className={styles.registerBtn}>
+            Registrarse
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
