@@ -13,7 +13,7 @@ export default function Historial() {
       if (session) {
         const { data, error } = await supabase
           .from('patients')
-          .select('*')
+          .select('id, name, age, diagnosis, user_id')
           .eq('user_id', session.user.id);
         if (!error) {
           setPatients(data);
@@ -24,7 +24,6 @@ export default function Historial() {
     }
     fetchPatients();
   }, [router]);
-
   return (
     <div style={{ padding: '40px' }}>
       <h1>Historias Clínicas</h1>
