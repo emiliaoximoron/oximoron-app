@@ -66,7 +66,6 @@ export default function Agenda() {
     }
 
     if (editingEvent) {
-      // Update existing event
       const { error } = await supabase
         .from('events')
         .update({
@@ -84,7 +83,6 @@ export default function Agenda() {
         alert('Error al actualizar el evento.');
       }
     } else {
-      // Create new event
       const { error } = await supabase.from('events').insert([{
         title: newEventTitle || (isSession ? getPatientName(selectedPatientId) : ''),
         date: formattedDate,
@@ -129,7 +127,16 @@ export default function Agenda() {
   }
 
   return (
-    <div style={{ padding: '40px' }}>
+    <div style={{ padding: '20px' }}>
+      <div style={{ marginBottom: '20px', display: 'flex', gap: '10px' }}>
+        <button onClick={() => router.back()} style={{ padding: '10px', backgroundColor: '#757575', color: 'white', border: 'none', borderRadius: '5px' }}>
+          Atrás
+        </button>
+        <button onClick={() => router.push('/dashboard')} style={{ padding: '10px', backgroundColor: '#4caf50', color: 'white', border: 'none', borderRadius: '5px' }}>
+          Home
+        </button>
+      </div>
+
       <h1>Agenda</h1>
 
       <Calendar
