@@ -1,9 +1,11 @@
-
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
+import dynamic from 'next/dynamic';
 import { supabase } from '../../lib/supabaseClient';
-import Calendar from 'react-calendar';
+import { useRouter } from 'next/router';
 import 'react-calendar/dist/Calendar.css';
+
+// Importar Calendar dinámicamente (solo en cliente)
+const Calendar = dynamic(() => import('react-calendar'), { ssr: false });
 
 export default function Agenda() {
   const [date, setDate] = useState(new Date());
