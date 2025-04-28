@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { supabase } from '../../lib/supabaseClient';
+import Navbar from '../../components/Navbar';
 import 'react-calendar/dist/Calendar.css';
 
 const Calendar = dynamic(() => import('react-calendar'), { ssr: false });
@@ -28,7 +29,7 @@ export default function Agenda() {
           .eq('created_by_user_id', session.user.id);
 
         const { data: patientsData } = await supabase
-          .from('patients')
+          .from('patients_v2')
           .select('id, name')
           .eq('user_id', session.user.id);
 
@@ -130,14 +131,7 @@ export default function Agenda() {
 
   return (
     <div style={{ padding: '20px' }}>
-      <div style={{ marginBottom: '20px', display: 'flex', gap: '10px' }}>
-        <button onClick={() => router.back()} style={{ padding: '10px', backgroundColor: '#757575', color: 'white', border: 'none', borderRadius: '5px' }}>
-          Atrás
-        </button>
-        <button onClick={() => router.push('/dashboard')} style={{ padding: '10px', backgroundColor: '#4caf50', color: 'white', border: 'none', borderRadius: '5px' }}>
-          Home
-        </button>
-      </div>
+      <Navbar />
 
       <h1>Agenda</h1>
 
