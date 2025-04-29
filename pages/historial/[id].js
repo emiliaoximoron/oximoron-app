@@ -110,6 +110,16 @@ export default function HistorialPaciente({ params }) {
   return (
     <div className="p-6 max-w-4xl mx-auto">
       <h1 className="text-3xl font-bold mb-6">Historial Clínico</h1>
+
+      <div className="mb-6">
+        <button
+          onClick={() => router.push(`/historial/${pacienteId}/resumenes`)}
+          className="bg-blue-500 text-white p-3 rounded w-full"
+        >
+          Ver Resúmenes IA
+        </button>
+      </div>
+
       <div className="mb-4 flex flex-col gap-2">
         <textarea
           value={notaActual}
