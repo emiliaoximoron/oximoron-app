@@ -26,8 +26,8 @@ export default function HistorialPaciente() {
       const { data } = await supabase
         .from('session_notes_v2')  // Cambié a 'session_notes_v2'
         .select('*')
-        .eq('created_by_user_id', pacienteId)  // Usamos created_by_user_id en vez de paciente_id
-        .order('created_at', { ascending: false });
+        .eq('created_by_user_id', pacienteId)  // Usamos created_by_user_id
+        .order('date', { ascending: false });  // Cambié a 'date' en vez de 'created_at'
       setNotas(data || []);
     }
     fetchNotas();
@@ -44,7 +44,7 @@ export default function HistorialPaciente() {
     } else {
       await supabase.from('session_notes_v2').insert([
         {
-          created_by_user_id: pacienteId,  // Usamos created_by_user_id para asociar la nota con el paciente
+          created_by_user_id: pacienteId,  // Usamos created_by_user_id
           contenido: notaActual,
         },
       ]);
@@ -58,7 +58,7 @@ export default function HistorialPaciente() {
       .from('session_notes_v2')  // Cambié a 'session_notes_v2'
       .select('*')
       .eq('created_by_user_id', pacienteId)  // Usamos created_by_user_id
-      .order('created_at', { ascending: false });
+      .order('date', { ascending: false });  // Cambié a 'date'
     setNotas(data || []);
   };
 
