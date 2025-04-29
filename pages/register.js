@@ -38,9 +38,8 @@ export default function Register() {
         'service_fcbqoau',
         'template_s2dneon',
         {
-          to_email: formData.email,
-          from_name: 'Oxímoron',
-          user_name: formData.name
+          user_email: formData.email,
+          name: formData.name
         },
         'shnohtbQHEqpLPfJb'
       );
