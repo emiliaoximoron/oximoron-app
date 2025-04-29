@@ -27,7 +27,7 @@ export default function HistorialPaciente() {
         .from('session_notes')
         .select('*')
         .eq('paciente_id', pacienteId)
-        .order('created_at', { ascending: true });
+        .order('created_at', { ascending: false });
       setNotas(data || []);
     }
     fetchNotas();
@@ -58,7 +58,7 @@ export default function HistorialPaciente() {
       .from('session_notes')
       .select('*')
       .eq('paciente_id', pacienteId)
-      .order('created_at', { ascending: true });
+      .order('created_at', { ascending: false });
     setNotas(data || []);
   };
 
@@ -109,74 +109,92 @@ export default function HistorialPaciente() {
   };
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">Historial Clínico</h1>
+    <div className="p-6 max-w-4xl mx-auto grid grid-cols-2 gap-4">
+      <div className="space-y-4">
+        <h1 className="text-3xl font-bold mb-6">Historial Clínico</h1>
 
-      <div className="mb-6">
-        <button
-          onClick={() => router.push(`/historial/${pacienteId}/resumenes`)}
-          className="bg-blue-500 text-white p-3 rounded w-full"
-        >
-          Ver Resúmenes IA
-        </button>
-      </div>
-
-      <div className="mb-4 flex flex-col gap-2">
-        <textarea
-          value={notaActual}
-          onChange={(e) => setNotaActual(e.target.value)}
-          placeholder="Escribí una nueva nota clínica..."
-          className="border rounded p-2 w-full h-32"
-        />
-        <div className="flex gap-2">
-          <button onClick={guardarNota} className="bg-green-500 text-white p-2 rounded">
-            {editandoId ? 'Actualizar Nota' : 'Guardar Nota'}
+        <div className="mb-6">
+          <button
+            onClick={() => router.push(`/historial/${pacienteId}/resumenes`)}
+            className="bg-green-500 text-white p-3 rounded w-full"
+          >
+            Ver Historial de Resúmenes IA
           </button>
-          {editandoId && (
-            <button onClick={cancelarEdicion} className="bg-gray-400 text-white p-2 rounded">
-              Cancelar
+        </div>
+
+        <div className="mb-4 flex flex-col gap-2">
+          <textarea
+            value={notaActual}
+            onChange={(e) => setNotaActual(e.target.value)}
+            placeholder="Escribí una nueva nota clínica..."
+            className="border rounded p-2 w-full h-32"
+          />
+          <div className="flex gap-2">
+            <button onClick={guardarNota} className="bg-green-500 text-white p-2 rounded">
+              {editandoId ? 'Actualizar Nota' : 'Guardar Nota'}
             </button>
-          )}
+            {editandoId && (
+              <button onClick={cancelarEdicion} className="bg-gray-400 text-white p-2 rounded">
+                Cancelar
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div className="flex gap-2">
+          <button
+            onClick={() => setSeleccionadas(notas.map((nota) => nota.id))}
+            className="bg-green-500 text-white p-2 rounded w-full"
+          >
+            Seleccionar todas
+          </button>
         </div>
       </div>
 
-      <div className="flex flex-col gap-4">
-        {notas.map((nota) => (
-          <div key={nota.id} className="border p-4 rounded shadow-md flex justify-between items-start">
-            <div>
-              <input
-                type="checkbox"
-                checked={seleccionadas.includes(nota.id)}
-                onChange={() => toggleSeleccion(nota.id)}
-                className="mr-2"
-              />
-              <p className="whitespace-pre-line">{nota.contenido}</p>
-              {nota.es_resumen && (
-                <p className="text-sm text-blue-500 mt-2">(Resumen IA)</p>
-              )}
-            </div>
-            <div className="flex flex-col gap-2">
-              {!nota.es_resumen && (
-                <>
-                  <button onClick={() => editarNota(nota)} className="text-yellow-500">
-                    Editar
-                  </button>
-                  <button onClick={() => eliminarNota(nota.id)} className="text-red-500">
-                    Eliminar
-                  </button>
-                </>
-              )}
-            </div>
-          </div>
-        ))}
-      </div>
+      <div className="space-y-4">
+        <h1 className="text-3xl font-bold mb-6">Notas Clínicas</h1>
 
-      <button
-        onClick={generarResumen}
-        className="mt-6 bg-purple-600 text-white p-3 rounded w-full"
-      >
-        Generar Resumen IA
-      </button>
+        <div className="flex flex-col gap-4">
+          {notas.map((nota) => (
+            <div
+              key={nota.id}
+              className="border p-4 rounded shadow-md flex justify-between items-start"
+            >
+              <div>
+                <input
+                  type="checkbox"
+                  checked={seleccionadas.includes(nota.id)}
+                  onChange={() => toggleSeleccion(nota.id)}
+                  className="mr-2"
+                />
+                <p className="whitespace-pre-line">{nota.contenido}</p>
+                {nota.es_resumen && (
+                  <p className="text-sm text-blue-500 mt-2">(Resumen IA)</p>
+                )}
+              </div>
+              <div className="flex flex-col gap-2">
+                {!nota.es_resumen && (
+                  <>
+                    <button onClick={() => editarNota(nota)} className="text-yellow-500">
+                      Editar
+                    </button>
+                    <button onClick={() => eliminarNota(nota.id)} className="text-red-500">
+                      Eliminar
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <button
+          onClick={generarResumen}
+          className="mt-6 bg-purple-600 text-white p-3 rounded w-full"
+        >
+          Generar Resumen IA
+        </button>
+      </div>
     </div>
   );
 }
