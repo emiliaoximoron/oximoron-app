@@ -30,7 +30,7 @@ export default function HistorialPaciente() {
     async function fetchNotas() {
       const { data } = await supabase
         .from('session_notes_v2')  // Cambié a 'session_notes_v2'
-        .select('*')
+        .select('created_by_user_id, contenido')  // Usamos 'select' correctamente
         .eq('created_by_user_id', pacienteId)  // Usamos created_by_user_id
         .order('date', { ascending: false });  // Cambié a 'date' en vez de 'created_at'
       setNotas(data || []);
@@ -61,7 +61,7 @@ export default function HistorialPaciente() {
   const refreshNotas = async () => {
     const { data } = await supabase
       .from('session_notes_v2')  // Cambié a 'session_notes_v2'
-      .select('*')
+      .select('created_by_user_id, contenido')  // Usamos 'select' correctamente
       .eq('created_by_user_id', pacienteId)  // Usamos created_by_user_id
       .order('date', { ascending: false });  // Cambié a 'date'
     setNotas(data || []);
