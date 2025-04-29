@@ -2,6 +2,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(
@@ -9,11 +10,13 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 );
 
-export default function ResumenesIA({ params }) {
-  const pacienteId = params.id;
+export default function ResumenesIA() {
+  const router = useRouter();
+  const pacienteId = router.query.id;
   const [resumenes, setResumenes] = useState([]);
 
   useEffect(() => {
+    if (!pacienteId) return;
     async function fetchResumenes() {
       const { data } = await supabase
         .from('session_notes')
