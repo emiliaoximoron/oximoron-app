@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/router';
 import { createClient } from '@supabase/supabase-js';
 import { generateSummary } from '@/utils/summaryIA';
 
@@ -11,9 +11,9 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 );
 
-export default function HistorialPaciente({ params }) {
+export default function HistorialPaciente() {
   const router = useRouter();
-  const pacienteId = params.id;
+  const pacienteId = router.query.id;
 
   const [notas, setNotas] = useState([]);
   const [notaActual, setNotaActual] = useState('');
@@ -21,6 +21,7 @@ export default function HistorialPaciente({ params }) {
   const [seleccionadas, setSeleccionadas] = useState([]);
 
   useEffect(() => {
+    if (!pacienteId) return;
     async function fetchNotas() {
       const { data } = await supabase
         .from('session_notes')
