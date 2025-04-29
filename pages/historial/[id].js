@@ -24,7 +24,7 @@ export default function HistorialPaciente() {
     if (!pacienteId) return;
     async function fetchNotas() {
       const { data } = await supabase
-        .from('session_notes')
+        .from('session_notes_v2')  // Cambié a 'session_notes_v2'
         .select('*')
         .eq('paciente_id', pacienteId)
         .order('created_at', { ascending: false });
@@ -37,12 +37,12 @@ export default function HistorialPaciente() {
     if (notaActual.trim() === '') return;
     if (editandoId) {
       await supabase
-        .from('session_notes')
+        .from('session_notes_v2')  // Cambié a 'session_notes_v2'
         .update({ contenido: notaActual })
         .eq('id', editandoId);
       setEditandoId(null);
     } else {
-      await supabase.from('session_notes').insert([
+      await supabase.from('session_notes_v2').insert([
         {
           paciente_id: pacienteId,
           contenido: notaActual,
@@ -55,7 +55,7 @@ export default function HistorialPaciente() {
 
   const refreshNotas = async () => {
     const { data } = await supabase
-      .from('session_notes')
+      .from('session_notes_v2')  // Cambié a 'session_notes_v2'
       .select('*')
       .eq('paciente_id', pacienteId)
       .order('created_at', { ascending: false });
@@ -64,7 +64,7 @@ export default function HistorialPaciente() {
 
   const eliminarNota = async (id) => {
     if (confirm('¿Seguro que querés eliminar esta nota?')) {
-      await supabase.from('session_notes').delete().eq('id', id);
+      await supabase.from('session_notes_v2').delete().eq('id', id);  // Cambié a 'session_notes_v2'
       refreshNotas();
     }
   };
@@ -97,7 +97,7 @@ export default function HistorialPaciente() {
 
     const resumen = await generateSummary(notasSeleccionadas);
 
-    await supabase.from('session_notes').insert([
+    await supabase.from('session_notes_v2').insert([  // Cambié a 'session_notes_v2'
       {
         paciente_id: pacienteId,
         contenido: resumen,
