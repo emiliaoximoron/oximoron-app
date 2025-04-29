@@ -1,9 +1,10 @@
 
 import { useEffect, useState } from 'react';
-import { supabase } from '../../lib/supabaseClient';
 import { useRouter } from 'next/router';
+import { supabase } from '../../lib/supabaseClient';
+import Navbar from '../../components/Navbar';
 
-export default function Historial() {
+export default function HistorialPacientes() {
   const [patients, setPatients] = useState([]);
   const router = useRouter();
 
@@ -12,43 +13,54 @@ export default function Historial() {
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
         const { data, error } = await supabase
-          .from('patients')
-          .select('id, name, age, diagnosis, user_id')
-          .eq('user_id', session.user.id);
-        if (!error) {
-          setPatients(data);
-        }
+          .from('patients_v2')
+          .select('id, name, birth_date, diagnosis')
+          .eq('user_id', session.user.id)
+          .order('name', { ascending: true });
+
+        if (!error) setPatients(data);
       } else {
         router.push('/login');
       }
     }
     fetchPatients();
   }, [router]);
+
   return (
-    <div style={{ padding: '40px' }}>
-      <h1>Historias Clínicas</h1>
-      <button
-        onClick={() => router.push('/pacientes/nuevo')}
-        style={{ marginBottom: '20px', padding: '10px 20px', backgroundColor: '#4caf50', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}
-      >
-        + Nuevo Paciente
-      </button>
+    <div style={{ padding: '20px' }}>
+      <Navbar />
+      <h1>Historial Clínico</h1>
+
       {patients.length === 0 ? (
-        <p>No hay pacientes registrados aún.</p>
+        <p>No hay pacientes registrados.</p>
       ) : (
-        <ul>
-          {patients.map((patient) => (
-            <li key={patient.id} style={{ marginBottom: '10px' }}>
-              {patient.name} ({patient.age} años) - {patient.diagnosis}
-              <button
-                onClick={() => router.push(`/historial/${patient.id}`)}
-                style={{ marginLeft: '10px', padding: '5px 10px', backgroundColor: '#2196f3', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}
-              >
-                Ver Paciente
-              </button>
-            </li>
-          ))}
-        </ul>
+        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <thead>
+            <tr>
+              <th style={{ borderBottom: '1px solid #ccc', padding: '10px' }}>Nombre</th>
+              <th style={{ borderBottom: '1px solid #ccc', padding: '10px' }}>Fecha de Nacimiento</th>
+              <th style={{ borderBottom: '1px solid #ccc', padding: '10px' }}>Diagnóstico</th>
+              <th style={{ borderBottom: '1px solid #ccc', padding: '10px' }}>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {patients.map((patient) => (
+              <tr key={patient.id}>
+                <td style={{ borderBottom: '1px solid #eee', padding: '10px' }}>{patient.name}</td>
+                <td style={{ borderBottom: '1px solid #eee', padding: '10px' }}>{patient.birth_date}</td>
+                <td style={{ borderBottom: '1px solid #eee', padding: '10px' }}>{patient.diagnosis}</td>
+                <td style={{ borderBottom: '1px solid #eee', padding: '10px' }}>
+                  <button
+                    onClick={() => router.push(`/historial/${patient.id}`)}
+                    style={{ backgroundColor: '#4caf50', color: 'white', padding: '5px 10px', border: 'none', borderRadius: '5px' }}
+                  >
+                    Ver Evolución
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       )}
     </div>
   );
