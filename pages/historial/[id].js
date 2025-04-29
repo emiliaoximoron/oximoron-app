@@ -13,7 +13,12 @@ const supabase = createClient(
 
 export default function HistorialPaciente() {
   const router = useRouter();
-  const pacienteId = router.query.id;
+  const pacienteId = router.query.id;  // Obtenemos el 'id' de la URL
+
+  // Verificación para asegurarnos de que el pacienteId esté correcto
+  useEffect(() => {
+    console.log("Paciente ID desde URL:", pacienteId);
+  }, [pacienteId]);
 
   const [notas, setNotas] = useState([]);
   const [notaActual, setNotaActual] = useState('');
